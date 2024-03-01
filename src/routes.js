@@ -15,10 +15,15 @@ export const routes = [
     method: 'POST',
     path: '/tasks',
     handler: (req, res) => {
+      if (!Object.keys(req.body).length) {
+        return res.writeHead(204).end('Missing content');
+      }
       const { title, description } = req.body;
+      if (!title || !description)
+        return res.writeHead(204).end('Missing title or description');
       const creationDate = new Date().toLocaleString('en-GB');
       const task = {
-        id: randoomUIID(),
+        id: randomUUID(),
         title: title,
         description: description,
         created_at: creationDate,
@@ -26,6 +31,7 @@ export const routes = [
         completed_at: null,
       };
       database.insert('tasks', task);
+      return res.writeHead(201).end();
     },
   },
   {
@@ -38,6 +44,6 @@ export const routes = [
   },
   {
     method: 'PATCH',
-    path: '/tasks',
+    path: '/tasks/:id/complete',
   },
 ];
