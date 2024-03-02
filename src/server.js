@@ -10,7 +10,7 @@ const server = http.createServer(async (req, res) => {
     return route.method === method; //Observa se o método requisitado exige em routes.js
   });
   if (route) {
-    const routeParams = url.match(route.path);
+    const routeParams = req.url.match(route.path);
     const { query, ...params } = routeParams.groups;
     req.params = params;
     req.query = query ? extractQueryParams(query) : {};

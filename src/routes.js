@@ -7,9 +7,13 @@ const database = new Database();
 export const routes = [
   {
     method: 'GET',
-    path: buildRoutePath('./tasks'),
+    path: buildRoutePath('/tasks'),
     handler: (req, res) => {
-      const tasks = database.select('tasks');
+      const { search } = req.query;
+      const tasks = database.select(
+        'tasks',
+        search ? { title: search, description: search } : null,
+      );
       return res.end(JSON.stringify(tasks));
     },
   },
