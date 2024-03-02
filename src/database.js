@@ -19,6 +19,10 @@ export class Database {
   #persist() {
     fs.writeFile(databasePath, JSON.stringify(this.#database));
   }
+  select(table, search) {
+    let data = this.#database[table];
+    return data;
+  }
   insert(table, data) {
     if (Array.isArray(this.#database[table])) {
       this.#database[table].push(data);
@@ -27,5 +31,16 @@ export class Database {
     }
     this.#persist();
     return data;
+  }
+  update(table, id, data) {
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id);
+    if (rowIndex > -1) {
+      Object.keys(data).forEach((value) => {
+        if (data[value]) {
+          this.#database[table][rowIndex][value] = data[value];
+        }
+      });
+      this.#persist();
+    }
   }
 }

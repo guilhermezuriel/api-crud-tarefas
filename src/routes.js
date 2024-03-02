@@ -1,26 +1,27 @@
 import { randomUUID } from 'node:crypto';
 import { Database } from './database.js';
+import { buildRoutePath } from './utils/buildRoutePath.js';
 
 const database = new Database();
 
 export const routes = [
   {
     method: 'GET',
-    path: '/tasks',
+    path: buildRoutePath('./tasks'),
     handler: (req, res) => {
-      return res.writeHead(200);
+      const tasks = database.select('tasks');
+      return res.end(JSON.stringify(tasks));
     },
   },
   {
     method: 'POST',
-    path: '/tasks',
+    path: buildRoutePath('/tasks'),
     handler: (req, res) => {
       if (!Object.keys(req.body).length) {
-        return res.writeHead(204).end('Missing content');
+        return res.writeHead(204).end();
       }
       const { title, description } = req.body;
-      if (!title || !description)
-        return res.writeHead(204).end('Missing title or description');
+      if (!title || !description) return res.writeHead(204).end();
       const creationDate = new Date().toLocaleString('en-GB');
       const task = {
         id: randomUUID(),
@@ -36,11 +37,22 @@ export const routes = [
   },
   {
     method: 'PUT',
-    path: '/tasks',
+    path: buildRoutePath('/tasks/:id'),
+    handler: (req, res) => {
+      const { id } = req.params;
+      const { title, description } = req.body;
+      const updated_at = new Date().toLocaleString('en-GB');
+      database.update('tasks', id, {
+        title,
+        description,
+        updated_at,
+      });
+      return res.writeHead(204).end();
+    },
   },
   {
     method: 'DELETE',
-    path: '/tasks',
+    path: '/tasks/:id',
   },
   {
     method: 'PATCH',
