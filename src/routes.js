@@ -44,6 +44,8 @@ export const routes = [
     path: buildRoutePath('/tasks/:id'),
     handler: (req, res) => {
       const { id } = req.params;
+      if (!database.validateID('tasks', id))
+        return res.writeHead(404).end('O registro não existe');
       const { title, description } = req.body;
       const updated_at = new Date().toLocaleString('en-GB');
       database.update('tasks', id, {
@@ -59,7 +61,8 @@ export const routes = [
     path: buildRoutePath('/tasks/:id'),
     handler: (req, res) => {
       const { id } = req.params;
-      if (!database.validateID('tasks', id)) return res.writeHead(404).end();
+      if (!database.validateID('tasks', id))
+        return res.writeHead(404).end('O registro não existe');
       database.delete('tasks', id);
       return res.writeHead(204).end();
     },
@@ -67,5 +70,12 @@ export const routes = [
   {
     method: 'PATCH',
     path: buildRoutePath('/tasks/:id/complete'),
+    handler: (req, res) => {
+      const { id } = req.params;
+      if (!database.validateID('tasks', id))
+        return res.writeHead(404).end('O registro não existe');
+      database.complete('tasks', id);
+      return res.writeHead(204).end();
+    },
   },
 ];

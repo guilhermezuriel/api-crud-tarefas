@@ -55,6 +55,12 @@ export class Database {
     this.#database[table].splice(rowIndex, 1);
     this.#persist();
   }
+  complete(table, id) {
+    const completedDate = new Date().toLocaleString('en-GB');
+    const rowIndex = this.#database[table].findIndex((row) => row.id === id);
+    this.#database[table][rowIndex]['completed_at'] = completedDate;
+    this.#persist();
+  }
   validateID(table, id) {
     const rowIndex = this.#database[table].findIndex((row) => row.id === id);
     if (rowIndex === -1) return false;
