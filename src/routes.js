@@ -56,10 +56,16 @@ export const routes = [
   },
   {
     method: 'DELETE',
-    path: '/tasks/:id',
+    path: buildRoutePath('/tasks/:id'),
+    handler: (req, res) => {
+      const { id } = req.params;
+      if (!database.validateID('tasks', id)) return res.writeHead(404).end();
+      database.delete('tasks', id);
+      return res.writeHead(204).end();
+    },
   },
   {
     method: 'PATCH',
-    path: '/tasks/:id/complete',
+    path: buildRoutePath('/tasks/:id/complete'),
   },
 ];
